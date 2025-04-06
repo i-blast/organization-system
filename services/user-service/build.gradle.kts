@@ -34,11 +34,11 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 
     // Spring Cloud
-    implementation("org.springframework.cloud:spring-cloud-starter-config")
-    implementation("org.springframework.cloud:spring-cloud-config-server")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
+//    implementation("org.springframework.cloud:spring-cloud-starter-config")
+//    implementation("org.springframework.cloud:spring-cloud-config-server")
+//    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+//    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+//    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 
     // DB
     runtimeOnly("org.postgresql:postgresql")
