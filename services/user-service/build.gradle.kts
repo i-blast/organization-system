@@ -33,6 +33,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+
     // Spring Cloud
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-config-server")
@@ -68,19 +70,16 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    jvmArgs("--enable-preview")
+    jvmArgs = listOf(
+        "-javaagent:${classpath.find { it.name.contains("byte-buddy-agent") }?.absolutePath}"
+    )
 }
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.addAll(
         listOf(
-            "--enable-preview",
             "-Amapstruct.defaultComponentModel=spring",
             "-Amapstruct.unmappedTargetPolicy=IGNORE"
         )
     )
-}
-
-tasks.withType<JavaExec> {
-    jvmArgs("--enable-preview")
 }

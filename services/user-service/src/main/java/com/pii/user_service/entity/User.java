@@ -1,4 +1,4 @@
-package com.pii.user_service.model;
+package com.pii.user_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
