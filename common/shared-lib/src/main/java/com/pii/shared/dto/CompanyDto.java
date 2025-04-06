@@ -1,4 +1,4 @@
-package com.pii.user_service.dto;
+package com.pii.shared.dto;
 
 import java.util.List;
 

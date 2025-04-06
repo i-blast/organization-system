@@ -1,6 +1,6 @@
 package com.pii.user_service.service;
 
-import com.pii.user_service.dto.UserDto;
+import com.pii.shared.dto.UserDto;
 
 import java.util.List;
 

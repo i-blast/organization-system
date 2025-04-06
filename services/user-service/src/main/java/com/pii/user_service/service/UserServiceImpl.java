@@ -1,7 +1,7 @@
 package com.pii.user_service.service;
 
 import com.pii.user_service.client.CompanyClient;
-import com.pii.user_service.dto.UserDto;
+import com.pii.shared.dto.UserDto;
 import com.pii.user_service.entity.User;
 import com.pii.user_service.mapper.UserMapper;
 import com.pii.user_service.repo.UserRepository;

@@ -1,6 +1,6 @@
 package com.pii.user_service.controller;
 
-import com.pii.user_service.dto.UserDto;
+import com.pii.shared.dto.UserDto;
 import com.pii.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

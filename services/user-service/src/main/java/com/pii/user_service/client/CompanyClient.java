@@ -1,6 +1,6 @@
 package com.pii.user_service.client;
 
-import com.pii.user_service.dto.CompanyDto;
+import com.pii.shared.dto.CompanyDto;
 
 public interface CompanyClient {
 

@@ -1,4 +1,4 @@
-package com.pii.user_service.exception;
+package com.pii.shared.exception;
 
 public class UnexpectedException extends RuntimeException {
 

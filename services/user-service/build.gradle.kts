@@ -19,13 +19,12 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 extra["springCloudVersion"] = "2024.0.1"
 
 dependencies {
+
+    // Common
+    implementation(project(":common:shared-lib"))
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
