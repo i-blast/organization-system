@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.pii.user_service.util.TestDataFactory.createUserDtoWithCompany;
-import static com.pii.user_service.util.TestDataFactory.createUserWithName;
+import static com.pii.shared.util.TestDataFactory.createUserDtoWithCompany;
+import static com.pii.shared.util.TestDataFactory.createUserWithName;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;

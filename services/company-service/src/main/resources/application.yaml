@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: company-service
+
+  datasource:
+    url: jdbc:postgresql://companies-db:5432/company-service
+    username: company-service
+    password: company-service
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  cloud:
+    discovery:
+      enabled: false
+    loadbalancer:
+      enabled: false
+
+server:
+  port: 8082
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'company-service'
+      paths-to-match: /api/company/**
+
+logging:
+  level:
+    root: INFO
+    com.pii: DEBUG
+#    org.hibernate: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.springframework.transaction: TRACE
+#    org.hibernate.type: TRACE
+#    org.hibernate.orm.jdbc.bind: DEBUG
