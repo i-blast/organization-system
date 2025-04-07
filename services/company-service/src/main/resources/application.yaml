@@ -26,9 +26,6 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
-  group-configs:
-    - group: 'company-service'
-      paths-to-match: /api/company/**
 
 logging:
   level:

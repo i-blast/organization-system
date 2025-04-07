@@ -1,11 +1,25 @@
 package com.pii.shared.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public record CompanyDto(
+
         Long id,
+
+        @NotBlank(message = "Company name must not be blank")
+        @Size(max = 255, message = "Company name must be at most 255 characters")
         String name,
-        Long budget,
-        List<Long> employeeIds
+
+        @NotNull(message = "Budget must not be null")
+        @PositiveOrZero(message = "Budget must be zero or positive")
+        Long budget, // Budget in USD cents.
+
+        @NotNull(message = "Employees list must not be null")
+        List<UserDto> employees
 ) {
 }

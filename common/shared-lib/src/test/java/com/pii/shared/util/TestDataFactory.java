@@ -11,7 +11,10 @@ public final class TestDataFactory {
     }
 
     public static CompanyDto createCompanyDto() {
-        return new CompanyDto(1L, "Test Company", 100_000L, List.of(1L));
+        return new CompanyDto(1L, "Test Company", 1000000000L, List.of(
+                new UserDto(1L, "Test1", "Doe", "+1234567890", null),
+                new UserDto(1L, "Test2", "Doe", "+1234567890", null)
+        ));
     }
 
     public static UserDto createUserDtoWithCompany() {

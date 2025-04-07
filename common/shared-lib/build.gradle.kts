@@ -12,6 +12,10 @@ java {
 }
 
 dependencies {
+
+    // Validation
+    implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+
     // Misc
     compileOnly("org.projectlombok:lombok:1.18.38")
     implementation("org.mapstruct:mapstruct:1.6.3")
