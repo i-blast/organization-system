@@ -35,14 +35,10 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-
-    // Validation
-    implementation("jakarta.validation:jakarta.validation-api:3.1.1")
-
     // Spring Cloud
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-config-server")
-//    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 //    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 //    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 

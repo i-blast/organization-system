@@ -38,7 +38,7 @@ dependencies {
     // Spring Cloud
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-config-server")
-//    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 //    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 //    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 

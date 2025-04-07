@@ -1,4 +1,19 @@
 services:
+  discovery-service:
+    build:
+      context: ./services/discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 20s
+      retries: 10
+    restart: unless-stopped
+
   users-db:
     image: postgres:17.4
     environment:
@@ -7,8 +22,10 @@ services:
       POSTGRES_DB: user-service
     ports:
       - "5433:5432"
+    networks:
+      - backend
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - users_data:/var/lib/postgresql/data
       - ./services/user-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U user-service" ]
@@ -22,9 +39,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+    networks:
+      - backend
     depends_on:
       users-db:
         condition: service_healthy
+      discovery-service:
+        condition: service_started
     restart: on-failure
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
@@ -40,6 +61,8 @@ services:
       POSTGRES_DB: company-service
     ports:
       - "5434:5432"
+    networks:
+      - backend
     volumes:
       - companies_data:/var/lib/postgresql/data
       - ./services/company-service/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -55,9 +78,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
+    networks:
+      - backend
     depends_on:
       companies-db:
         condition: service_healthy
+      discovery-service:
+        condition: service_started
     restart: on-failure
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8082/actuator/health" ]
@@ -66,5 +93,8 @@ services:
       retries: 3
 
 volumes:
-  postgres_data:
+  users_data:
   companies_data:
+
+networks:
+  backend:
