@@ -14,12 +14,15 @@
 ## Technology
 
 - **JDK 24**
-- **Spring Boot (Spring Web, Spring Data, Actuator)**
-- **Spring Cloud (Config, Eureka, OpenFeign, LoadBalancer)**
+- **Spring Boot (Web, Data, Actuator, Validation)**
+- **Spring Cloud (Eureka, OpenFeign)**
 - **PostgreSQL**
 - **Docker Compose**
-- **MapStruct, Lombok, Spring Test, H2, Testcontainers**
+- **MapStruct, Lombok, Spring Test**
 
 ## TODO
 
+- **E2E tests with testcontainers & REST Assured**
+- **Spring Cloud (Config, LoadBalancer, Contract Verifier with Wiremock)**
+- **Mixed blocking OpenFeign & event-driven RabbitMQ interaction**
 - 

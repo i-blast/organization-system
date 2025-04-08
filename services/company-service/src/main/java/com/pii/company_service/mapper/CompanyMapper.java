@@ -1,8 +1,9 @@
 package com.pii.company_service.mapper;
 
+import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.company_service.entity.Company;
 import com.pii.shared.dto.CompanyDto;
-import com.pii.shared.dto.UserDto;
+import com.pii.shared.dto.UserShortDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -17,22 +18,20 @@ public interface CompanyMapper {
     CompanyDto toDto(Company company);
 
     @Mapping(target = "employees", source = "employees", qualifiedByName = "mapUsersToEmployeeIds")
-    Company toEntity(CompanyDto companyDto);
+    Company toEntity(CreateCompanyRequest companyDto);
 
     @Named("mapEmployeeIdsToUsers")
-    default List<UserDto> mapEmployeeIdsToUsers(List<Long> employeeIds) {
+    static List<UserShortDto> mapEmployeeIdsToUsers(List<Long> employeeIds) {
+        // TODO
+        // Здесь должен быть вызов клиента (например, userService или userClient)
+        // Сейчас можно оставить заглушку:
         return employeeIds.stream()
-                .map(id -> new UserDto(id, null, null, null, null))
+                .map(id -> new UserShortDto(id, "FirstName" + id, "LastName" + id, "000-000-000" + id))
                 .toList();
     }
 
     @Named("mapUsersToEmployeeIds")
-    default List<Long> mapUsersToEmployeeIds(List<UserDto> users) {
-        if (users == null) {
-            return null;
-        }
-        return users.stream()
-                .map(UserDto::id)
-                .toList();
+    static List<Long> mapUsersToEmployeeIds(List<Long> users) {
+        return users;
     }
 }

@@ -33,4 +33,28 @@ public class CompanyRepositoryTest {
                 .ignoringFields("id")
                 .isEqualTo(company);
     }
+
+    @Test
+    void shouldThrowWhenNameIsBlank() {
+        var company = Company.builder()
+                .name(" ")
+                .budget(100_00L)
+                .employees(List.of(1L, 2L))
+                .build();
+        assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Company name must not be blank");
+    }
+
+    @Test
+    void shouldThrowWhenBudgetIsNegative() {
+        var company = Company.builder()
+                .name("Test Company")
+                .budget(-1L)
+                .employees(List.of())
+                .build();
+        assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("Budget must be zero or positive");
+    }
 }

@@ -3,7 +3,8 @@ spring:
     name: company-service
 
   datasource:
-    url: jdbc:postgresql://companies-db:5432/company-service
+#    url: jdbc:postgresql://companies-db:5432/company-service
+    url: jdbc:postgresql://localhost:5434/company-service
     username: company-service
     password: company-service
 
@@ -15,13 +16,14 @@ spring:
   cloud:
     discovery:
       enabled: true
-    loadbalancer:
-      enabled: false
+#    loadbalancer:
+#      enabled: false
 
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka/
+#      defaultZone: http://discovery-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
 
@@ -40,6 +42,7 @@ logging:
     com.pii: DEBUG
 #    org.hibernate: DEBUG
 #    org.hibernate.SQL: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
 #    org.springframework.transaction: TRACE
 #    org.hibernate.type: TRACE
 #    org.hibernate.orm.jdbc.bind: DEBUG

@@ -1,6 +1,7 @@
 package com.pii.user_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pii.user_service.dto.CreateUserRequest;
 import com.pii.user_service.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static com.pii.shared.util.TestDataFactory.createUserDtoWithCompany;
 import static com.pii.shared.util.TestDataFactory.createUserWithName;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -30,18 +32,21 @@ class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void shouldCreateUser() throws Exception {
         var userDto = createUserDtoWithCompany();
+        var request = new CreateUserRequest("Ivan", "Ivanov", "123456", 1L);
         when(userService.createUser(any())).thenReturn(userDto);
+
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value(userDto.firstName()))
-                .andExpect(jsonPath("$.lastName").value(userDto.lastName()));
+                .andExpect(jsonPath("$.firstName").value(userDto.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userDto.getLastName()));
         verify(userService).createUser(any());
     }
 
@@ -67,11 +72,12 @@ class UserControllerTest {
 
     @Test
     void shouldUpdateUser() throws Exception {
-        var updatedUser = createUserWithName("Updated");
-        when(userService.updateUser(eq(1L), any())).thenReturn(updatedUser);
+        var userDto = createUserWithName("Updated");
+        var request = new CreateUserRequest("Updated", "Ivanov", "123456", 1L);
+        when(userService.updateUser(eq(1L), any())).thenReturn(userDto);
         mockMvc.perform(put("/api/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedUser)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Updated"));
         verify(userService).updateUser(eq(1L), any());
@@ -85,12 +91,13 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsersByCompany_shouldReturnUserList() throws Exception {
-        var userDto = createUserDtoWithCompany();
-        when(userService.findUserByCompany(1L)).thenReturn(List.of(userDto));
-        mockMvc.perform(get("/api/users/by-company/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].company.id").value(userDto.company().id()));
-        verify(userService).findUserByCompany(1L);
+    void shouldReturnBadRequestWhenInputIsInvalid() throws Exception {
+        var invalidRequest = new CreateUserRequest("", "", "", null);
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("must not be blank")))
+                .andExpect(jsonPath("$.status").value(400));
     }
 }

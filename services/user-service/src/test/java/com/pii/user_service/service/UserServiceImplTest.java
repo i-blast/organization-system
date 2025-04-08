@@ -1,21 +1,27 @@
 package com.pii.user_service.service;
 
+import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.UserShortDto;
+import com.pii.shared.exception.ExternalServiceException;
 import com.pii.user_service.client.CompanyClient;
+import com.pii.user_service.dto.CreateUserRequest;
+import com.pii.user_service.entity.User;
+import com.pii.user_service.exception.UserNotFoundException;
 import com.pii.user_service.mapper.UserMapper;
 import com.pii.user_service.repo.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static com.pii.shared.util.TestDataFactory.*;
-import static com.pii.user_service.util.TestDataFactory.*;
+import static com.pii.user_service.util.TestDataFactory.createUserEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,55 +48,109 @@ class UserServiceImplTest {
     @Test
     void shouldFindUserById() {
         var user = createUserEntity();
+        var companyDto = new CompanyDto(1L, "TestCompany", 1000L, null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(companyClient.getCompanyById(1L)).thenReturn(ResponseEntity.ok(companyDto));
+
         var result = userService.findUserById(1L);
-        assertThat(result.firstName()).isEqualTo("John");
+        assertThat(result).isNotNull();
+        assertThat(result.getFirstName()).isEqualTo("John");
+        assertThat(result.getCompany().name()).isEqualTo("TestCompany");
     }
 
     @Test
     void shouldThrowWhenUserNotFound() {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> userService.findUserById(999L))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("User not found.");
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
+    }
+
+    @Test
+    void shouldThrowWhenCompanyNotFoundOnCreate() {
+        var request = new CreateUserRequest("John", "Doe", "123456", 1L);
+        when(companyClient.getCompanyById(1L)).thenReturn(ResponseEntity.notFound().build());
+        assertThatThrownBy(() -> userService.createUser(request))
+                .isInstanceOf(ExternalServiceException.class)
+                .hasMessageContaining("Company not found id=1");
     }
 
     @Test
     void shouldCreateUser() {
-        var userDto = createUserDtoWithCompany();
-        var userEntity = userMapper.toEntity(userDto);
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
+        var request = new CreateUserRequest("John", "Doe", "123456", 1L);
+        var companyDto = new CompanyDto(1L, "TestCompany", 1000L, null);
+        var userEntity = userMapper.toEntity(request);
+        when(companyClient.getCompanyById(1L)).thenReturn(ResponseEntity.ok(companyDto));
+        when(userRepository.save(any(User.class))).thenReturn(userEntity);
+        when(companyClient.assignUserToCompany(any(), any())).thenReturn(ResponseEntity.ok().build());
 
-        var result = userService.createUser(userDto);
+        var createdUserDto = userService.createUser(request);
 
-        assertThat(result.firstName()).isEqualTo(userDto.firstName());
-        assertThat(result.lastName()).isEqualTo(userDto.lastName());
-        assertThat(result.phoneNumber()).isEqualTo(userDto.phoneNumber());
+        assertThat(createdUserDto).isNotNull();
+        assertThat(createdUserDto.getFirstName()).isEqualTo("John");
+        assertThat(createdUserDto.getCompany()).isNotNull();
+        assertThat(createdUserDto.getCompany().id()).isEqualTo(1L);
     }
 
     @Test
     void shouldUpdateUser() {
         var user = createUserEntity();
-        var updatedDto = createUserWithName("UpdatedName");
-        var companyDto = createCompanyDto();
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        var request = new CreateUserRequest("Updated", "Doe", "654321", 2L);
+        var companyDto = new CompanyDto(
+                1L,
+                "NewCompany",
+                1000000000L,
+                List.of(new UserShortDto(1L, "John", "Doe", "+1234567890"))
+        );
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(companyClient.getCompanyById(2L)).thenReturn(ResponseEntity.ok(companyDto));
+        when(companyClient.assignUserToCompany(any(), any())).thenReturn(ResponseEntity.ok().build());
 
-        var result = userService.updateUser(user.getId(), updatedDto);
+        var updatedUserDto = userService.updateUser(1L, request);
 
-        assertThat(result.firstName()).isEqualTo("UpdatedName");
+        assertThat(updatedUserDto.getFirstName()).isEqualTo("Updated");
+        assertThat(updatedUserDto.getCompany().name()).isEqualTo("NewCompany");
+    }
+
+    @Test
+    void shouldThrowWhenCompanyNotFoundOnUpdate() {
+        var user = createUserEntity();
+        var request = new CreateUserRequest("Updated", "Doe", "654321", 2L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(companyClient.getCompanyById(2L)).thenReturn(ResponseEntity.notFound().build());
+        assertThatThrownBy(() -> userService.updateUser(1L, request))
+                .isInstanceOf(ExternalServiceException.class)
+                .hasMessageContaining("Company not found");
     }
 
     @Test
     void shouldFindAllUsers() {
-        var user = createUserEntity();
+        var user = new User(1L, "John", "Doe", "123456", 1L);
+        var companyDto = new CompanyDto(1L, "TestCompany", 1000L, null);
         when(userRepository.findAll()).thenReturn(List.of(user));
-        when(companyClient.getCompanyById(user.getCompanyId()))
-                .thenReturn(userMapper.toDto(user).company());
+        when(companyClient.getCompaniesByUsers(List.of(1L))).thenReturn(ResponseEntity.ok(Map.of(1L, companyDto)));
 
         var result = userService.findAllUsers();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).firstName()).isEqualTo(user.getFirstName());
+        assertThat(result.get(0).getCompany().name()).isEqualTo("TestCompany");
+    }
+
+    @Test
+    void shouldDeleteUserSuccessfully() {
+        var user = createUserEntity();
+        user.setId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(companyClient.unassignUserFromCompany(1L, 1L)).thenReturn(ResponseEntity.ok().build());
+        userService.deleteUser(1L);
+    }
+
+    @Test
+    void shouldThrowWhenUserNotFoundOnDelete() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> userService.deleteUser(99L))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
     }
 }

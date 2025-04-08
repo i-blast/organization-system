@@ -1,25 +1,24 @@
 package com.pii.shared.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public record CompanyDto(
+@Builder
+@Data
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
+public final class CompanyDto {
 
-        Long id,
+    private final Long id;
 
-        @NotBlank(message = "Company name must not be blank")
-        @Size(max = 255, message = "Company name must be at most 255 characters")
-        String name,
+    private final String name;
 
-        @NotNull(message = "Budget must not be null")
-        @PositiveOrZero(message = "Budget must be zero or positive")
-        Long budget, // Budget in USD cents.
+    private final Long budget;
 
-        @NotNull(message = "Employees list must not be null")
-        List<UserDto> employees
-) {
+    private final List<UserShortDto> employees;
+
 }

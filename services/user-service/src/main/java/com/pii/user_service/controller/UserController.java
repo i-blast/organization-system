@@ -1,9 +1,12 @@
 package com.pii.user_service.controller;
 
 import com.pii.shared.dto.UserDto;
+import com.pii.user_service.dto.CreateUserRequest;
 import com.pii.user_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,14 +14,15 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.createUser(userDto));
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
+        return ResponseEntity.ok(userService.createUser(createUserRequest));
     }
 
     @GetMapping("/{id}")
@@ -29,9 +33,9 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable Long id,
-            @RequestBody UserDto userDto
+            @RequestBody @Valid CreateUserRequest createUserRequest
     ) {
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
+        return ResponseEntity.ok(userService.updateUser(id, createUserRequest));
     }
 
     @GetMapping
@@ -47,6 +51,6 @@ public class UserController {
 
     @GetMapping("/by-company/{companyId}")
     public ResponseEntity<List<UserDto>> getUsersByCompany(@PathVariable Long companyId) {
-        return ResponseEntity.ok(userService.findUserByCompany(companyId));
+        return ResponseEntity.ok(userService.findUsersByCompany(companyId));
     }
 }

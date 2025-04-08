@@ -1,8 +1,6 @@
 package com.pii.company_service.exception;
 
-import jakarta.persistence.EntityNotFoundException;
-
-public class CompanyNotFoundException extends EntityNotFoundException {
+public class CompanyNotFoundException extends RuntimeException {
 
     public CompanyNotFoundException(String message) {
         super(message);

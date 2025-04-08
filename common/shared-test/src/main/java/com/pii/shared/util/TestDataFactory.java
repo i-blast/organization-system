@@ -1,7 +1,9 @@
 package com.pii.shared.util;
 
 import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.CompanyShortDto;
 import com.pii.shared.dto.UserDto;
+import com.pii.shared.dto.UserShortDto;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public final class TestDataFactory {
                 1L,
                 "Test Company",
                 1000000000L,
-                List.of(new UserDto(1L, "John", "Doe", "+1234567890", null))
+                List.of(new UserShortDto(1L, "John", "Doe", "+1234567890"))
         );
     }
 
@@ -29,7 +31,7 @@ public final class TestDataFactory {
                 firstName,
                 "Doe",
                 "+1234567890",
-                createCompanyDto()
+                new CompanyShortDto(1L, "Test Company", 1000000000L)
         );
     }
 }

@@ -38,5 +38,5 @@ public class Company {
     @ElementCollection
     @CollectionTable(name = "company_employees", joinColumns = @JoinColumn(name = "company_id"))
     @Column(name = "employee_id")
-    private List<@NotNull(message = "Employee ID must not be null") Long> employees;
+    private List<Long> employees;
 }

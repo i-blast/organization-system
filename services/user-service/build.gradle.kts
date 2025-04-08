@@ -31,15 +31,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-
+//    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Spring Cloud
 //    implementation("org.springframework.cloud:spring-cloud-starter-config")
 //    implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-//    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 //    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 
     // DB
@@ -56,8 +56,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+/*    testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("io.rest-assured:rest-assured")*/
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

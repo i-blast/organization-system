@@ -1,6 +1,7 @@
 package com.pii.user_service.mapper;
 
 import com.pii.shared.dto.UserDto;
+import com.pii.user_service.dto.CreateUserRequest;
 import com.pii.user_service.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -10,5 +11,5 @@ public interface UserMapper {
 
     UserDto toDto(User user);
 
-    User toEntity(UserDto userDto);
+    User toEntity(CreateUserRequest dto);
 }

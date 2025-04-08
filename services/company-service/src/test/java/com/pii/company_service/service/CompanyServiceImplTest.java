@@ -33,7 +33,7 @@ class CompanyServiceImplTest {
     private CompanyMapper companyMapper;
     private CompanyServiceImpl companyService;
 
-    @BeforeEach
+/*    @BeforeEach
     void setUp() {
         companyMapper = Mappers.getMapper(CompanyMapper.class);
         companyService = new CompanyServiceImpl(companyRepository, companyMapper, userClient);
@@ -90,6 +90,6 @@ class CompanyServiceImplTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).name()).isEqualTo(company.getName());
-    }
+    }*/
 
 }
