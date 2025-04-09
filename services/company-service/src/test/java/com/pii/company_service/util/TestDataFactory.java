@@ -13,7 +13,6 @@ public final class TestDataFactory {
         return Company.builder()
                 .name("Serious Organization")
                 .budget(100000000L)
-                .employees(List.of(1L, 2L, 3L))
                 .build();
     }
 }

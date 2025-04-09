@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CompanyClient companyClient;
 
+    @Transactional
     @Override
     public UserDto createUser(CreateUserRequest createUserRequest) {
 
@@ -87,7 +88,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Transactional
     @Override
     public UserDto findUserById(Long id) {
 
@@ -194,6 +194,16 @@ public class UserServiceImpl implements UserService {
             log.error("Failed to delete user id={} and unassign it from company id={}", userId, companyId, exc);
             throw new TransactionalOperationException("Failed to update user and unassign it from company", exc);
         }
+    }
+
+    @Override
+    public List<UserDto> getUsersByIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return List.of();
+        }
+        return userRepository.findAllById(userIds).stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     @Override

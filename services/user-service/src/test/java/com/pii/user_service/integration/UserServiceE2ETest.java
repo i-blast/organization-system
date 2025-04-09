@@ -1,5 +1,6 @@
 package com.pii.user_service.integration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -8,13 +9,14 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserServiceE2ETest extends BaseIntegrationTest {
 
-   /* @BeforeEach
+    @BeforeEach
     void setUp() {
         System.setProperty("company-service.url", "http://localhost:8081/api/companies");
-        RestAssured.baseURI = "http://localhost:" + port;
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+//        RestAssured.baseURI = "http://localhost:" + port;
+//        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
+/*
     static Long companyId;
 
     @Test

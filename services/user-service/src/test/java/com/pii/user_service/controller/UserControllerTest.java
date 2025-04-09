@@ -100,4 +100,20 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message").value(containsString("must not be blank")))
                 .andExpect(jsonPath("$.status").value(400));
     }
+
+    @Test
+    void shouldGetUsersByIds() throws Exception {
+        var userDto = createUserDtoWithCompany();
+        var ids = List.of(1L, 2L);
+        when(userService.getUsersByIds(ids)).thenReturn(List.of(userDto));
+
+        mockMvc.perform(post("/api/users/by-ids")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(userDto.getId()))
+                .andExpect(jsonPath("$[0].firstName").value(userDto.getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(userDto.getLastName()));
+        verify(userService).getUsersByIds(ids);
+    }
 }

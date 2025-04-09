@@ -10,8 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "companies")
 @Data
@@ -34,9 +32,4 @@ public class Company {
     @NotNull(message = "Budget is required")
     @PositiveOrZero(message = "Budget must be zero or positive")
     private Long budget;
-
-    @ElementCollection
-    @CollectionTable(name = "company_employees", joinColumns = @JoinColumn(name = "company_id"))
-    @Column(name = "employee_id")
-    private List<Long> employees;
 }

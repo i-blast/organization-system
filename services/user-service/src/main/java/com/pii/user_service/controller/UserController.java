@@ -4,6 +4,7 @@ import com.pii.shared.dto.UserDto;
 import com.pii.user_service.dto.CreateUserRequest;
 import com.pii.user_service.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -52,5 +53,12 @@ public class UserController {
     @GetMapping("/by-company/{companyId}")
     public ResponseEntity<List<UserDto>> getUsersByCompany(@PathVariable Long companyId) {
         return ResponseEntity.ok(userService.findUsersByCompany(companyId));
+    }
+
+    @PostMapping("/by-ids")
+    public ResponseEntity<List<UserDto>> getUsersByIds(
+            @RequestBody @NotNull(message = "Users list must not be null") List<Long> userIds
+    ) {
+        return ResponseEntity.ok(userService.getUsersByIds(userIds));
     }
 }

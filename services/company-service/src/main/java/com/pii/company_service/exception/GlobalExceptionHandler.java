@@ -1,5 +1,7 @@
 package com.pii.company_service.exception;
 
+import com.pii.shared.exception.ExternalServiceException;
+import com.pii.shared.exception.TransactionalOperationException;
 import com.pii.shared.exception.UnexpectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +39,21 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(TransactionalOperationException.class)
+    public ResponseEntity<ErrorResponse> handleTransactionalOperationException(TransactionalOperationException exc) {
+        log.error("Transactional operation failed", exc);
+        return buildErrorResponse(exc, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ErrorResponse> handleExternalServiceException(ExternalServiceException exc) {
+        log.error("External service error", exc);
+        return buildErrorResponse(exc, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exc) {
+        log.error("Unexpected error occurred", exc);
         return buildErrorResponse(
                 new UnexpectedException("Unexpected server error"),
                 HttpStatus.INTERNAL_SERVER_ERROR

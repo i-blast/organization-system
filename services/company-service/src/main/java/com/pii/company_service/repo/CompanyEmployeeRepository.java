@@ -12,13 +12,26 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
 
     @Transactional
     @Modifying
-    @Query("INSERT INTO CompanyEmployee(companyId, employeeId) VALUES (:companyId, :employeeId)")
-    void assignEmployeeToCompany(Long companyId, Long employeeId);
+    @Query(value = """
+                INSERT INTO company_employees(company_id, employee_id)
+                SELECT :companyId, unnest(array[:employeeIds])
+            """, nativeQuery = true)
+    void assignEmployeesToCompany(Long companyId, List<Long> employeeIds);
 
     @Transactional
     @Modifying
     @Query("DELETE FROM CompanyEmployee WHERE companyId = :companyId AND employeeId = :employeeId")
     void unassignEmployeeFromCompany(Long companyId, Long employeeId);
+
+    @Transactional
+    @Modifying
+    @Query("""
+                DELETE FROM CompanyEmployee ce
+                WHERE ce.companyId = :companyId
+            """)
+    void unassignAllFromCompany(Long companyId);
+
+    List<CompanyEmployee> findByCompanyIdIn(List<Long> companyIds);
 
     boolean existsByCompanyIdAndEmployeeId(Long companyId, Long employeeId);
 

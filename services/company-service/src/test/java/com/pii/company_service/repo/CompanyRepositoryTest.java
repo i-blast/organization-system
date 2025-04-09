@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
 import static com.pii.company_service.util.TestDataFactory.createCompanyEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,7 +37,6 @@ public class CompanyRepositoryTest {
         var company = Company.builder()
                 .name(" ")
                 .budget(100_00L)
-                .employees(List.of(1L, 2L))
                 .build();
         assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
                 .isInstanceOf(ConstraintViolationException.class)
@@ -51,7 +48,6 @@ public class CompanyRepositoryTest {
         var company = Company.builder()
                 .name("Test Company")
                 .budget(-1L)
-                .employees(List.of())
                 .build();
         assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
                 .isInstanceOf(ConstraintViolationException.class)
