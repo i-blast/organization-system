@@ -3,7 +3,6 @@ spring:
     name: company-service
 
   datasource:
-#    url: jdbc:postgresql://companies-db:5432/company-service
     url: jdbc:postgresql://localhost:5434/company-service
     username: company-service
     password: company-service
@@ -24,7 +23,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-#      defaultZone: http://discovery-service:8761/eureka/
       defaultZone: http://localhost:8761/eureka/
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
