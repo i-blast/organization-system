@@ -10,7 +10,6 @@ import com.pii.user_service.exception.UserNotFoundException;
 import com.pii.user_service.mapper.UserMapper;
 import com.pii.user_service.repo.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -67,14 +66,13 @@ class UserServiceImplTest {
                 .hasMessageContaining("User not found");
     }
 
-    @Disabled("Fix exception handling!")
     @Test
     void shouldThrowWhenCompanyNotFoundOnCreate() {
         var request = new CreateUserRequest("John", "Doe", "123456", 1L);
         when(companyClient.getCompanyById(1L)).thenReturn(ResponseEntity.notFound().build());
         assertThatThrownBy(() -> userService.createUser(request))
                 .isInstanceOf(ExternalServiceException.class)
-                .hasMessageContaining("Company not found id=1");
+                .hasMessageContaining("Failed to receive company data id=1");
     }
 
     @Test

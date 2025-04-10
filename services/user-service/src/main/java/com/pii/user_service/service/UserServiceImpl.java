@@ -36,14 +36,9 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(CreateUserRequest createUserRequest) {
 
         log.info("Check company exists ID: {}", createUserRequest.companyId());
-        ResponseEntity<CompanyDto> companyResponse;
-        try {
-            companyResponse = companyClient.getCompanyById(createUserRequest.companyId());
-            if (!companyResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companyResponse.getBody())) {
-                throw new ExternalServiceException("Company not found id=" + createUserRequest.companyId());
-            }
-        } catch (Exception exc) {
-            log.error("Failed to receive company data id={}", createUserRequest.companyId(), exc);
+        ResponseEntity<CompanyDto> companyResponse = companyClient.getCompanyById(createUserRequest.companyId());
+        if (!companyResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companyResponse.getBody())) {
+            log.error("Failed to receive company data id={}", createUserRequest.companyId());
             throw new ExternalServiceException("Failed to receive company data id=" + createUserRequest.companyId());
         }
 
