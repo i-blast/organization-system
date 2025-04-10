@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: e2e-tests
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+logging:
+  level:
+    root: INFO
+    com.pii: DEBUG

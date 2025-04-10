@@ -1,8 +1,8 @@
 package com.pii.company_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.company_service.service.CompanyService;
+import com.pii.shared.dto.CreateCompanyRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -1,8 +1,8 @@
 package com.pii.company_service.mapper;
 
-import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.company_service.entity.Company;
 import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.CreateCompanyRequest;
 import com.pii.shared.dto.UserShortDto;
 import org.mapstruct.*;
 

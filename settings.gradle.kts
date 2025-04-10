@@ -9,6 +9,7 @@ include(
 // Infrastructure
 include(
     "services:discovery-service",
+    "e2e-tests",
 )
 
 // Shared

@@ -2,11 +2,11 @@ package com.pii.user_service.service;
 
 import com.pii.shared.dto.CompanyDto;
 import com.pii.shared.dto.CompanyShortDto;
+import com.pii.shared.dto.CreateUserRequest;
 import com.pii.shared.dto.UserDto;
 import com.pii.shared.exception.ExternalServiceException;
 import com.pii.shared.exception.TransactionalOperationException;
 import com.pii.user_service.client.CompanyClient;
-import com.pii.user_service.dto.CreateUserRequest;
 import com.pii.user_service.entity.User;
 import com.pii.user_service.exception.UserNotFoundException;
 import com.pii.user_service.mapper.UserMapper;

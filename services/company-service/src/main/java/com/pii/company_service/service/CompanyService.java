@@ -1,7 +1,7 @@
 package com.pii.company_service.service;
 
-import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.CreateCompanyRequest;
 
 import java.util.List;
 import java.util.Map;

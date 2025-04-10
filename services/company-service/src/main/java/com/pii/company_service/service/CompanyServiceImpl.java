@@ -1,7 +1,6 @@
 package com.pii.company_service.service;
 
 import com.pii.company_service.client.UserClient;
-import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.company_service.entity.Company;
 import com.pii.company_service.entity.CompanyEmployee;
 import com.pii.company_service.exception.CompanyNotFoundException;
@@ -10,6 +9,7 @@ import com.pii.company_service.mapper.ToEmployeesMapping;
 import com.pii.company_service.repo.CompanyEmployeeRepository;
 import com.pii.company_service.repo.CompanyRepository;
 import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.CreateCompanyRequest;
 import com.pii.shared.dto.UserDto;
 import com.pii.shared.dto.UserShortDto;
 import com.pii.shared.exception.ExternalServiceException;

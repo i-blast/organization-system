@@ -25,7 +25,6 @@ dependencies {
 
     // Common
     implementation(project(":common:shared-lib"))
-    implementation(project(":common:shared-test"))
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -53,11 +52,10 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
     // Tests
+    testImplementation(project(":common:shared-test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
-//    testImplementation("org.testcontainers:postgresql")
-//    testImplementation("org.testcontainers:junit-jupiter")
     runtimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

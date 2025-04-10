@@ -1,8 +1,8 @@
 package com.pii.company_service.controller;
 
-import com.pii.company_service.dto.CreateCompanyRequest;
 import com.pii.company_service.service.CompanyService;
 import com.pii.shared.dto.CompanyDto;
+import com.pii.shared.dto.CreateCompanyRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

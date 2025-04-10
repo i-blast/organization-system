@@ -1,7 +1,7 @@
 package com.pii.user_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pii.user_service.dto.CreateUserRequest;
+import com.pii.shared.dto.CreateUserRequest;
 import com.pii.user_service.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

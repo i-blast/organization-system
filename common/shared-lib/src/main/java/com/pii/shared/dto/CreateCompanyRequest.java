@@ -1,4 +1,4 @@
-package com.pii.company_service.dto;
+package com.pii.shared.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

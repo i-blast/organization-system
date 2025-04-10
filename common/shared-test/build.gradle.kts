@@ -1,5 +1,7 @@
 plugins {
     java
+    id("org.springframework.boot") version "3.4.4"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "com.pii.shared"
@@ -11,10 +13,26 @@ java {
     }
 }
 
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 dependencies {
 
     // Common
     implementation(project(":common:shared-lib"))
+
+    // Tests
+    implementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
+    implementation("org.testcontainers:testcontainers")
+    implementation("org.testcontainers:postgresql")
+    implementation("org.testcontainers:junit-jupiter")
+    implementation("io.rest-assured:rest-assured")
+    runtimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Misc
     compileOnly("org.projectlombok:lombok:1.18.38")

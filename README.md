@@ -18,11 +18,12 @@
 - **Spring Cloud (Eureka, OpenFeign)**
 - **PostgreSQL**
 - **Docker Compose**
+- **E2E tests with testcontainers & REST Assured**
 - **MapStruct, Lombok, Spring Test**
 
 ## TODO
-
-- **E2E tests with testcontainers & REST Assured**
-- **Spring Cloud (Config, LoadBalancer, Contract Verifier with Wiremock)**
+- 
+- **Spring Cloud API Gateway**
+- **Spring Cloud (Config, LoadBalancer, Resilience4j, Contract Verifier with Wiremock)**
 - **Mixed blocking OpenFeign & event-driven RabbitMQ interaction**
 - 

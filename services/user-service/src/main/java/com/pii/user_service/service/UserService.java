@@ -1,7 +1,7 @@
 package com.pii.user_service.service;
 
+import com.pii.shared.dto.CreateUserRequest;
 import com.pii.shared.dto.UserDto;
-import com.pii.user_service.dto.CreateUserRequest;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
