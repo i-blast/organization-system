@@ -12,7 +12,6 @@ import java.util.List;
 
 @FeignClient(
         name = "user-service",
-        url = "http://localhost:8081",
         path = "/api/users"
 )
 public interface UserClient {

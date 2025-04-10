@@ -10,7 +10,6 @@ import java.util.Map;
 
 @FeignClient(
         name = "company-service",
-        url = "http://localhost:8082",
         path = "/api/companies"
 )
 public interface CompanyClient {
