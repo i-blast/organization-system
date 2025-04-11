@@ -41,3 +41,11 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 }
+
+tasks.getByName<Jar>("jar") {
+    enabled = true
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    enabled = false
+}

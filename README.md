@@ -22,7 +22,7 @@
 - **MapStruct, Lombok, Spring Test**
 
 ## TODO
-- 
+
 - **Spring Cloud API Gateway**
 - **Spring Cloud (Config, LoadBalancer, Resilience4j, Contract Verifier with Wiremock)**
 - **Mixed blocking OpenFeign & event-driven RabbitMQ interaction**

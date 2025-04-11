@@ -86,6 +86,28 @@ services:
       timeout: 10s
       retries: 3
 
+  gateway-service:
+    image: gateway-service:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      discovery-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      company-service:
+        condition: service_started
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   users_data:
   companies_data:

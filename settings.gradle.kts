@@ -9,6 +9,7 @@ include(
 // Infrastructure
 include(
     "services:discovery-service",
+    "services:gateway-service",
     "e2e-tests",
 )
 
