@@ -1,4 +1,23 @@
 services:
+  config-service:
+    build:
+      context: ./services/config-service
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./config:/config
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   discovery-service:
     build:
       context: ./services/discovery-service
@@ -9,6 +28,9 @@ services:
       - "8761:8761"
     networks:
       - backend
+    depends_on:
+      config-service:
+        condition: service_started
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health || exit 1" ]
       interval: 10s
@@ -46,6 +68,8 @@ services:
     networks:
       - backend
     depends_on:
+      config-service:
+        condition: service_started
       users-db:
         condition: service_healthy
       discovery-service:
@@ -87,6 +111,8 @@ services:
     networks:
       - backend
     depends_on:
+      config-service:
+        condition: service_started
       companies-db:
         condition: service_healthy
       discovery-service:
@@ -109,6 +135,8 @@ services:
     networks:
       - backend
     depends_on:
+      config-service:
+        condition: service_started
       discovery-service:
         condition: service_started
       user-service:

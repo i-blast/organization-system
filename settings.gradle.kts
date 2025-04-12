@@ -10,6 +10,10 @@ include(
 include(
     "services:discovery-service",
     "services:gateway-service",
+
+    "config",
+    "services:config-service",
+
     "e2e-tests",
 )
 

@@ -1,9 +1,10 @@
 spring:
   application:
     name: discovery-service
-
-server:
-  port: 8761
+  config:
+    import: optional:configserver:http://localhost:8888
+  profiles:
+    active: dev
 
 eureka:
   client:

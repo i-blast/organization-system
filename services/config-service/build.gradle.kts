@@ -4,8 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-
-group = "com.pii.gateway_service"
+group = "com.pii.config_service"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -14,17 +13,19 @@ java {
     }
 }
 
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 extra["springCloudVersion"] = "2024.0.1"
 
 dependencies {
 
     // Spring
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.6")
-    implementation("org.springframework.cloud:spring-cloud-starter-config")
 
     // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -35,6 +36,7 @@ dependencyManagement {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
     }
 }
+
 
 tasks.test {
     useJUnitPlatform()

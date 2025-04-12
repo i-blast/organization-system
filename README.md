@@ -15,7 +15,7 @@
 
 - **JDK 24**
 - **Spring Boot (Web, Data, Actuator, Validation)**
-- **Spring Cloud (Eureka, OpenFeign)**
+- **Spring Cloud (Eureka, OpenFeign, Gateway, Config)**
 - **PostgreSQL**
 - **Docker Compose**
 - **E2E tests with testcontainers & REST Assured**
@@ -23,7 +23,6 @@
 
 ## TODO
 
-- **Spring Cloud API Gateway**
-- **Spring Cloud (Config, LoadBalancer, Resilience4j, Contract Verifier with Wiremock)**
+- **Spring Cloud (LoadBalancer, Resilience4j, Contract Verifier with Wiremock)**
 - **Mixed blocking OpenFeign & event-driven RabbitMQ interaction**
 - 
