@@ -2,6 +2,7 @@ package com.pii.user_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pii.shared.dto.CreateUserRequest;
+import com.pii.shared.dto.UserDto;
 import com.pii.user_service.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ class UserControllerTest {
 
     @Test
     void shouldCreateUser() throws Exception {
-        var userDto = createUserDtoWithCompany();
-        var request = new CreateUserRequest("Ivan", "Ivanov", "123456", 1L);
+        UserDto userDto = createUserDtoWithCompany();
+        CreateUserRequest request = new CreateUserRequest("Ivan", "Ivanov", "123456", 1L);
         when(userService.createUser(any())).thenReturn(userDto);
 
         mockMvc.perform(post("/api/users")
@@ -54,7 +55,7 @@ class UserControllerTest {
 
     @Test
     void shouldGetUserById() throws Exception {
-        var userDto = createUserDtoWithCompany();
+        UserDto userDto = createUserDtoWithCompany();
         when(userService.findUserById(1L)).thenReturn(userDto);
         mockMvc.perform(get("/api/users/1"))
                 .andExpect(status().isOk())
@@ -64,7 +65,7 @@ class UserControllerTest {
 
     @Test
     void shouldGetAllUsers() throws Exception {
-        var userDto = createUserDtoWithCompany();
+        UserDto userDto = createUserDtoWithCompany();
         when(userService.findAllUsers()).thenReturn(List.of(userDto));
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
@@ -74,8 +75,8 @@ class UserControllerTest {
 
     @Test
     void shouldUpdateUser() throws Exception {
-        var userDto = createUserWithName("Updated");
-        var request = new CreateUserRequest("Updated", "Ivanov", "123456", 1L);
+        UserDto userDto = createUserWithName("Updated");
+        CreateUserRequest request = new CreateUserRequest("Updated", "Ivanov", "123456", 1L);
         when(userService.updateUser(eq(1L), any())).thenReturn(userDto);
         mockMvc.perform(put("/api/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,7 +95,7 @@ class UserControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenInputIsInvalid() throws Exception {
-        var invalidRequest = new CreateUserRequest("", "", "", null);
+        CreateUserRequest invalidRequest = new CreateUserRequest("", "", "", null);
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
@@ -105,8 +106,8 @@ class UserControllerTest {
 
     @Test
     void shouldGetUsersByIds() throws Exception {
-        var userDto = createUserDtoWithCompany();
-        var ids = List.of(1L, 2L);
+        UserDto userDto = createUserDtoWithCompany();
+        List<Long> ids = List.of(1L, 2L);
         when(userService.getUsersByIds(ids)).thenReturn(List.of(userDto));
 
         mockMvc.perform(post("/api/users/by-ids")

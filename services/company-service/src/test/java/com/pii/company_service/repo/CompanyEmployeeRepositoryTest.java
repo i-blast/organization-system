@@ -29,7 +29,7 @@ public class CompanyEmployeeRepositoryTest {
 
     @Test
     void shouldUnassignEmployee() {
-        var companyEmployee = new CompanyEmployee(1L, 10L);
+        CompanyEmployee companyEmployee = new CompanyEmployee(1L, 10L);
         companyEmployeeRepository.save(companyEmployee);
         assertTrue(companyEmployeeRepository.existsByCompanyIdAndEmployeeId(1L, 10L));
         companyEmployeeRepository.unassignEmployeeFromCompany(1L, 10L);
@@ -43,7 +43,7 @@ public class CompanyEmployeeRepositoryTest {
                 new CompanyEmployee(2L, 101L),
                 new CompanyEmployee(3L, 102L)
         ));
-        var found = companyEmployeeRepository.findByEmployeeIdIn(List.of(100L, 102L));
+        List<CompanyEmployee> found = companyEmployeeRepository.findByEmployeeIdIn(List.of(100L, 102L));
         assertThat(found).hasSize(2);
         assertThat(found).extracting(CompanyEmployee::getEmployeeId)
                 .containsExactlyInAnyOrder(100L, 102L);
@@ -58,7 +58,7 @@ public class CompanyEmployeeRepositoryTest {
         ));
 
         companyEmployeeRepository.unassignAllFromCompany(10L);
-        var remaining = companyEmployeeRepository.findAll();
+        List<CompanyEmployee> remaining = companyEmployeeRepository.findAll();
 
         assertThat(remaining).hasSize(1);
         assertThat(remaining.get(0).getCompanyId()).isEqualTo(11L);

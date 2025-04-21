@@ -23,10 +23,10 @@ public class UserRepositoryTest {
 
     @Test
     void shouldSaveAndRetrieveUser() {
-        var user = createUserEntity();
-        var savedUser = userRepository.save(user);
+        User user = createUserEntity();
+        User savedUser = userRepository.save(user);
 
-        var users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         assertThat(savedUser.getId()).isNotNull();
         assertThat(users).hasSize(1);
@@ -38,11 +38,11 @@ public class UserRepositoryTest {
 
     @Test
     void shouldFindByCompanyId() {
-        var user1 = createUserEntityWithCompany(1L);
-        var user2 = createUserEntityWithCompany(2L);
+        User user1 = createUserEntityWithCompany(1L);
+        User user2 = createUserEntityWithCompany(2L);
         userRepository.saveAll(List.of(user1, user2));
 
-        var usersFromCompany1 = userRepository.findByCompanyId(2L);
+        List<User> usersFromCompany1 = userRepository.findByCompanyId(2L);
 
         assertThat(usersFromCompany1)
                 .hasSize(1)
@@ -53,13 +53,13 @@ public class UserRepositoryTest {
 
     @Test
     void shouldReturnEmptyListWhenCompanyIdNotFound() {
-        var users = userRepository.findByCompanyId(999L);
+        List<User> users = userRepository.findByCompanyId(999L);
         assertThat(users).isEmpty();
     }
 
     @Test
     void shouldThrowExceptionWhenCompanyIdIsNull() {
-        var user = User.builder()
+        User user = User.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .phoneNumber("+1234567890")

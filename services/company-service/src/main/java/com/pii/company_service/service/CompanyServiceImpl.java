@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,17 +41,16 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDto findCompanyById(Long id) {
-        var company = companyRepository.findById(id)
+        Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new CompanyNotFoundException("Company not found."));
-        var companyDto = companyMapper.toDto(company, toEmployeesMapping);
-        return companyDto;
+        return companyMapper.toDto(company, toEmployeesMapping);
     }
 
     @Transactional
     @Override
     public CompanyDto createCompany(CreateCompanyRequest createCompanyRequest) {
         try {
-            var newCompany = companyRepository.save(companyMapper.toEntity(createCompanyRequest));
+            Company newCompany = companyRepository.save(companyMapper.toEntity(createCompanyRequest));
             log.info("Company created successfully id={}", newCompany.getId());
 
             if (!createCompanyRequest.employees().isEmpty()) {
@@ -73,12 +73,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto updateCompany(Long id, CreateCompanyRequest createCompanyRequest) {
 
-        var savedCompany = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
+        Company savedCompany = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
         savedCompany.setName(createCompanyRequest.name());
         savedCompany.setBudget(createCompanyRequest.budget());
 
         try {
-            var updatedCompany = companyRepository.save(savedCompany);
+            Company updatedCompany = companyRepository.save(savedCompany);
             log.info("Company updated successfully companyId={}", updatedCompany.getId());
 
             if (!createCompanyRequest.employees().isEmpty()) {
@@ -98,7 +98,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void deleteCompany(Long id) {
 
-        var company = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
+        Company company = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
         try {
             companyEmployeeRepository.unassignAllFromCompany(id);
             log.info("All employees unassigned from company id={}", id);
@@ -114,22 +114,22 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyDto> findAllCompanies() {
 
-        var savedCompanies = companyRepository.findAll();
+        List<Company> savedCompanies = companyRepository.findAll();
         if (savedCompanies.isEmpty()) {
             return List.of();
         }
 
-        var allEmployeeAssignments = companyEmployeeRepository.findByCompanyIdIn(
+        List<CompanyEmployee> allEmployeeAssignments = companyEmployeeRepository.findByCompanyIdIn(
                 savedCompanies.stream().map(Company::getId).toList()
         );
-        var allEmployeeIds = allEmployeeAssignments.stream()
+        List<Long> allEmployeeIds = allEmployeeAssignments.stream()
                 .map(CompanyEmployee::getEmployeeId)
                 .distinct()
                 .toList();
-        var employeesByIds = fetchEmployeesData(allEmployeeIds).stream().collect(
+        Map<Long, UserShortDto> employeesByIds = fetchEmployeesData(allEmployeeIds).stream().collect(
                 Collectors.toMap(UserShortDto::id, dto -> dto)
         );
-        var employeesByCompanyIds = allEmployeeAssignments.stream()
+        Map<Long, List<UserShortDto>> employeesByCompanyIds = allEmployeeAssignments.stream()
                 .collect(Collectors.groupingBy(
                         CompanyEmployee::getCompanyId,
                         Collectors.mapping(
@@ -150,11 +150,12 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     private List<UserShortDto> fetchEmployeesData(List<Long> employees) {
+
         List<UserShortDto> result = List.of();
         if (!employees.isEmpty()) {
             log.info("Fetching employees data ids: {}", employees);
             try {
-                var employeesResponse = userClient.getEmployeesByIds(employees);
+                ResponseEntity<List<UserDto>> employeesResponse = userClient.getEmployeesByIds(employees);
                 result = employeesResponse.getBody().stream()
                         .map(this::toUserShortDto)
                         .toList();
@@ -181,12 +182,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Map<Long, CompanyDto> getCompaniesByEmployees(List<Long> employeeIds) {
 
-        var employeesInCompanies = companyEmployeeRepository.findByEmployeeIdIn(employeeIds);
-        var companyIds = employeesInCompanies.stream()
+        List<CompanyEmployee> employeesInCompanies = companyEmployeeRepository.findByEmployeeIdIn(employeeIds);
+        List<Long> companyIds = employeesInCompanies.stream()
                 .map(CompanyEmployee::getCompanyId)
                 .distinct()
                 .toList();
-        var companies = companyRepository.findAllById(companyIds).stream()
+        Map<Long, Company> companies = companyRepository.findAllById(companyIds).stream()
                 .collect(Collectors.toMap(Company::getId, Function.identity()));
 
         return employeesInCompanies.stream()

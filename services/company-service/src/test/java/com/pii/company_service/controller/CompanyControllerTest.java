@@ -2,6 +2,7 @@ package com.pii.company_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pii.company_service.service.CompanyService;
+import com.pii.shared.dto.CompanyDto;
 import com.pii.shared.dto.CreateCompanyRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ class CompanyControllerTest {
 
     @Test
     void shouldGetCompanyById() throws Exception {
-        var companyDto = createCompanyDto();
+        CompanyDto companyDto = createCompanyDto();
         when(companyService.findCompanyById(1L)).thenReturn(companyDto);
         mockMvc.perform(get("/api/companies/1"))
                 .andExpect(status().isOk())
@@ -60,9 +61,9 @@ class CompanyControllerTest {
 
     @Test
     void shouldGetCompaniesByEmployees() throws Exception {
-        var companyDto = createCompanyDto();
-        var ids = List.of(1L, 2L);
-        var responseMap = Map.of(1L, companyDto);
+        CompanyDto companyDto = createCompanyDto();
+        List<Long> ids = List.of(1L, 2L);
+        Map<Long, CompanyDto> responseMap = Map.of(1L, companyDto);
         when(companyService.getCompaniesByEmployees(ids)).thenReturn(responseMap);
 
         mockMvc.perform(post("/api/companies/employees/companies")
@@ -76,8 +77,8 @@ class CompanyControllerTest {
 
     @Test
     void shouldCreateCompany() throws Exception {
-        var createRequest = new CreateCompanyRequest("TestCompany", 1_000_000L, List.of(1L));
-        var companyDto = createCompanyDto();
+        CreateCompanyRequest createRequest = new CreateCompanyRequest("TestCompany", 1_000_000L, List.of(1L));
+        CompanyDto companyDto = createCompanyDto();
         when(companyService.createCompany(createRequest)).thenReturn(companyDto);
 
         mockMvc.perform(post("/api/companies")
@@ -91,8 +92,8 @@ class CompanyControllerTest {
 
     @Test
     void shouldUpdateCompany() throws Exception {
-        var updateRequest = new CreateCompanyRequest("UpdatedCompany", 2_000_000L, List.of(2L));
-        var companyDto = createCompanyDto();
+        CreateCompanyRequest updateRequest = new CreateCompanyRequest("UpdatedCompany", 2_000_000L, List.of(2L));
+        CompanyDto companyDto = createCompanyDto();
         when(companyService.updateCompany(1L, updateRequest)).thenReturn(companyDto);
 
         mockMvc.perform(put("/api/companies/1")
@@ -113,7 +114,7 @@ class CompanyControllerTest {
 
     @Test
     void shouldGetAllCompanies() throws Exception {
-        var companyDto = createCompanyDto();
+        CompanyDto companyDto = createCompanyDto();
         when(companyService.findAllCompanies()).thenReturn(List.of(companyDto));
 
         mockMvc.perform(get("/api/companies"))

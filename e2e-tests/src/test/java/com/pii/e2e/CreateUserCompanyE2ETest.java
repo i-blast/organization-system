@@ -42,12 +42,12 @@ class CreateUserCompanyE2ETest extends BaseE2ETest {
     void shouldCreateCompanyAndUserAndAssign() {
 
         // Create company
-        var createCompanyRequest = new CreateCompanyRequest(
+        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest(
                 "Очень серьёзная организация",
                 1000000000L,
                 List.of()
         );
-        var company = RestAssured.given()
+        CompanyDto company = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(createCompanyRequest)
                 .post(companyServiceUrl)
@@ -57,13 +57,13 @@ class CreateUserCompanyE2ETest extends BaseE2ETest {
                 .as(CompanyDto.class);
 
         // Create user
-        var createUserRequest = new CreateUserRequest(
+        CreateUserRequest createUserRequest = new CreateUserRequest(
                 "ilYa",
                 "hello",
                 "1234567890",
                 company.getId()
         );
-        var user = RestAssured.given()
+        UserDto user = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(createUserRequest)
                 .post(userServiceUrl)
@@ -77,7 +77,7 @@ class CreateUserCompanyE2ETest extends BaseE2ETest {
         assertThat(user.getCompany().id()).isEqualTo(company.getId());
 
         // Assert updated company contains user
-        var updatedCompany = RestAssured.given()
+        CompanyDto updatedCompany = RestAssured.given()
                 .get(companyServiceUrl + "/" + company.getId())
                 .then()
                 .statusCode(200)

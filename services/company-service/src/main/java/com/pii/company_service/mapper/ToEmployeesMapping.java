@@ -3,11 +3,13 @@ package com.pii.company_service.mapper;
 import com.pii.company_service.client.UserClient;
 import com.pii.company_service.entity.CompanyEmployee;
 import com.pii.company_service.repo.CompanyEmployeeRepository;
+import com.pii.shared.dto.UserDto;
 import com.pii.shared.dto.UserShortDto;
 import com.pii.shared.exception.ExternalServiceException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,18 +25,18 @@ public class ToEmployeesMapping {
 
     public List<UserShortDto> mapCompanyToUsers(Long companyId) {
 
-        var employees = companyEmployeeRepository.findByCompanyIdIn(List.of(companyId)).stream()
+        List<Long> employeeIds = companyEmployeeRepository.findByCompanyIdIn(List.of(companyId)).stream()
                 .map(CompanyEmployee::getEmployeeId)
                 .toList();
-        if (employees.isEmpty()) {
+        if (employeeIds.isEmpty()) {
             return List.of();
         }
 
-        log.info("Fetching employees data for companyId={} with employeeIds={}", companyId, employees);
+        log.info("Fetching employeeIds data for companyId={} with employeeIds={}", companyId, employeeIds);
         try {
 
-            var response = userClient.getEmployeesByIds(employees);
-            return response.getBody().stream()
+            ResponseEntity<List<UserDto>> employeesByIds = userClient.getEmployeesByIds(employeeIds);
+            return employeesByIds.getBody().stream()
                     .map(dto -> new UserShortDto(
                             dto.getId(),
                             dto.getFirstName(),
@@ -43,8 +45,8 @@ public class ToEmployeesMapping {
                     ))
                     .toList();
         } catch (Exception exc) {
-            log.error("Failed to fetch employees data companyId={} employeeIds={}", companyId, employees, exc);
-            throw new ExternalServiceException("Failed to fetch employees data", exc);
+            log.error("Failed to fetch employeeIds data companyId={} employeeIds={}", companyId, employeeIds, exc);
+            throw new ExternalServiceException("Failed to fetch employeeIds data", exc);
         }
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -43,13 +44,13 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            var savedUser = userRepository.save(userMapper.toEntity(createUserRequest));
+            User savedUser = userRepository.save(userMapper.toEntity(createUserRequest));
             log.info("User created successfully id={}", savedUser.getId());
 
             assignUserToCompany(savedUser, createUserRequest.companyId());
             log.info("User id={} assigned to company id={} successfully", savedUser.getId(), createUserRequest.companyId());
 
-            var userDto = userMapper.toDto(savedUser);
+            UserDto userDto = userMapper.toDto(savedUser);
             userDto.setCompany(new CompanyShortDto(
                     companyResponse.getBody().getId(),
                     companyResponse.getBody().getName(),
@@ -70,15 +71,15 @@ public class UserServiceImpl implements UserService {
     }
 
     private void assignUserToCompany(User user, Long companyId) {
-        var response = companyClient.assignUserToCompany(user.getId(), companyId);
-        if (!response.getStatusCode().is2xxSuccessful()) {
+        ResponseEntity<Void> assignResponse = companyClient.assignUserToCompany(user.getId(), companyId);
+        if (!assignResponse.getStatusCode().is2xxSuccessful()) {
             throw new ExternalServiceException("Failed to assign user to company");
         }
     }
 
     private void unassignUserFromCompany(User user, Long companyId) {
-        var response = companyClient.unassignUserFromCompany(user.getId(), companyId);
-        if (!response.getStatusCode().is2xxSuccessful()) {
+        ResponseEntity<Void> unassignResponse = companyClient.unassignUserFromCompany(user.getId(), companyId);
+        if (!unassignResponse.getStatusCode().is2xxSuccessful()) {
             throw new ExternalServiceException("Failed to unassign user from company");
         }
     }
@@ -86,14 +87,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(Long id) {
 
-        var savedUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User savedUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        var companyResponse = companyClient.getCompanyById(savedUser.getCompanyId());
+        ResponseEntity<CompanyDto> companyResponse = companyClient.getCompanyById(savedUser.getCompanyId());
         if (!companyResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companyResponse.getBody())) {
             throw new ExternalServiceException("Failed to receive company data");
         }
 
-        var userDto = userMapper.toDto(savedUser);
+        UserDto userDto = userMapper.toDto(savedUser);
         userDto.setCompany(new CompanyShortDto(
                 companyResponse.getBody().getId(),
                 companyResponse.getBody().getName(),
@@ -106,9 +107,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long userId, CreateUserRequest createUserRequest) {
 
-        var savedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User savedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        var companyResponse = companyClient.getCompanyById(createUserRequest.companyId());
+        ResponseEntity<CompanyDto> companyResponse = companyClient.getCompanyById(createUserRequest.companyId());
         if (!companyResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companyResponse.getBody())) {
             throw new ExternalServiceException("Company not found userId=" + createUserRequest.companyId());
         }
@@ -119,13 +120,13 @@ public class UserServiceImpl implements UserService {
         savedUser.setCompanyId(createUserRequest.companyId());
 
         try {
-            var updatedUser = userRepository.save(savedUser);
+            User updatedUser = userRepository.save(savedUser);
             log.info("User updated successfully userId={}", updatedUser.getId());
 
             assignUserToCompany(updatedUser, createUserRequest.companyId());
             log.info("User userId={} assigned to company userId={} successfully", updatedUser.getId(), createUserRequest.companyId());
 
-            var userDto = userMapper.toDto(updatedUser);
+            UserDto userDto = userMapper.toDto(updatedUser);
             userDto.setCompany(new CompanyShortDto(
                     companyResponse.getBody().getId(),
                     companyResponse.getBody().getName(),
@@ -143,25 +144,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findAllUsers() {
 
-        var allUsers = userRepository.findAll();
+        List<User> allUsers = userRepository.findAll();
         if (allUsers.isEmpty()) {
             return List.of();
         }
 
-        var userIds = allUsers.stream().map(User::getId).toList();
-        var companiesByUsersResponse = companyClient.getCompaniesByUsers(userIds);
+        List<Long> userIds = allUsers.stream().map(User::getId).toList();
+        ResponseEntity<Map<Long, CompanyDto>> companiesByUsersResponse = companyClient.getCompaniesByUsers(userIds);
         if (!companiesByUsersResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companiesByUsersResponse.getBody())) {
             throw new ExternalServiceException("Companies data receiving failed usersId=" + userIds);
         }
 
-        var companiesByUserId = companiesByUsersResponse.getBody();
+        Map<Long, CompanyDto> companiesByUserId = companiesByUsersResponse.getBody();
         return allUsers.stream()
                 .map(user -> mapToUserDto(user, companiesByUserId.get(user.getId())))
                 .toList();
     }
 
     private UserDto mapToUserDto(User user, CompanyDto companyDto) {
-        var userDto = userMapper.toDto(user);
+        UserDto userDto = userMapper.toDto(user);
         if (companyDto != null) {
             userDto.setCompany(new CompanyShortDto(
                     companyDto.getId(),
@@ -176,8 +177,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
 
-        var savedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        var companyId = savedUser.getCompanyId();
+        User savedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        Long companyId = savedUser.getCompanyId();
 
         try {
             userRepository.deleteById(userId);
@@ -204,17 +205,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findUsersByCompany(Long companyId) {
 
-        var users = userRepository.findByCompanyId(companyId);
+        List<User> users = userRepository.findByCompanyId(companyId);
         if (users.isEmpty()) {
             return List.of();
         }
 
-        var companyResponse = companyClient.getCompanyById(companyId);
+        ResponseEntity<CompanyDto> companyResponse = companyClient.getCompanyById(companyId);
         if (!companyResponse.getStatusCode().is2xxSuccessful() || companyResponse.getBody() == null) {
             throw new ExternalServiceException("Company not found with id: " + companyId);
         }
 
-        var companyShortDto = new CompanyShortDto(
+        CompanyShortDto companyShortDto = new CompanyShortDto(
                 companyResponse.getBody().getId(),
                 companyResponse.getBody().getName(),
                 companyResponse.getBody().getBudget()
