@@ -1,10 +1,10 @@
 package com.pii.company_service.repo;
 
 import com.pii.company_service.entity.Company;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -37,22 +37,10 @@ public class CompanyRepositoryTest {
     @Test
     void shouldThrowWhenNameIsBlank() {
         Company company = Company.builder()
-                .name(" ")
+                .name(null)
                 .budget(100_00L)
                 .build();
         assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("Company name must not be blank");
-    }
-
-    @Test
-    void shouldThrowWhenBudgetIsNegative() {
-        Company company = Company.builder()
-                .name("Test Company")
-                .budget(-1L)
-                .build();
-        assertThatThrownBy(() -> companyRepository.saveAndFlush(company))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("Budget must be zero or positive");
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

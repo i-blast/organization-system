@@ -1,17 +1,14 @@
 package com.pii.user_service.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class User {
 
@@ -19,16 +16,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String firstName;
 
-    @NotNull
+    @Column(nullable = false)
     private String lastName;
 
-    @NotNull
+    @Column(nullable = false)
     private String phoneNumber;
 
-    @NotNull
+    @Column(nullable = false)
     private Long companyId;
 
 }

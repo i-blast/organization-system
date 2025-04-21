@@ -1,10 +1,10 @@
 package com.pii.user_service.repo;
 
 import com.pii.user_service.entity.User;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -66,6 +66,6 @@ public class UserRepositoryTest {
                 .companyId(null)
                 .build();
         assertThatThrownBy(() -> userRepository.saveAndFlush(user))
-                .isInstanceOf(ConstraintViolationException.class);
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

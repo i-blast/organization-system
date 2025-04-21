@@ -1,31 +1,31 @@
 package com.pii.company_service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "company_employees")
 @IdClass(CompanyEmployeeId.class)
 public class CompanyEmployee {
 
     @Id
+    @Column(nullable = false)
     private Long companyId;
 
     @Id
+    @Column(nullable = false)
     private Long employeeId;
 }
 
+@NoArgsConstructor
+@AllArgsConstructor
 class CompanyEmployeeId implements Serializable {
 
     private Long companyId;
