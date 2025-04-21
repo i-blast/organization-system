@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(CreateUserRequest createUserRequest) {
 
-        log.info("Check company exists ID: {}", createUserRequest.companyId());
         ResponseEntity<CompanyDto> companyResponse = companyClient.getCompanyById(createUserRequest.companyId());
         if (!companyResponse.getStatusCode().is2xxSuccessful() || Objects.isNull(companyResponse.getBody())) {
             log.error("Failed to receive company data id={}", createUserRequest.companyId());
@@ -45,10 +44,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             User savedUser = userRepository.save(userMapper.toEntity(createUserRequest));
-            log.info("User created successfully id={}", savedUser.getId());
-
             assignUserToCompany(savedUser, createUserRequest.companyId());
-            log.info("User id={} assigned to company id={} successfully", savedUser.getId(), createUserRequest.companyId());
 
             UserDto userDto = userMapper.toDto(savedUser);
             userDto.setCompany(new CompanyShortDto(
@@ -57,6 +53,11 @@ public class UserServiceImpl implements UserService {
                     companyResponse.getBody().getBudget()
             ));
 
+            log.info(
+                    "User created successfully id={}. User assigned to company id={} successfully",
+                    savedUser.getId(),
+                    createUserRequest.companyId()
+            );
             return userDto;
 
         } catch (Exception exc) {
@@ -121,10 +122,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             User updatedUser = userRepository.save(savedUser);
-            log.info("User updated successfully userId={}", updatedUser.getId());
-
             assignUserToCompany(updatedUser, createUserRequest.companyId());
-            log.info("User userId={} assigned to company userId={} successfully", updatedUser.getId(), createUserRequest.companyId());
 
             UserDto userDto = userMapper.toDto(updatedUser);
             userDto.setCompany(new CompanyShortDto(
@@ -133,6 +131,11 @@ public class UserServiceImpl implements UserService {
                     companyResponse.getBody().getBudget()
             ));
 
+            log.info(
+                    "User updated successfully userId={}. User assigned to company companyId={} successfully",
+                    updatedUser.getId(),
+                    createUserRequest.companyId()
+            );
             return userDto;
 
         } catch (Exception exc) {
@@ -182,10 +185,8 @@ public class UserServiceImpl implements UserService {
 
         try {
             userRepository.deleteById(userId);
-            log.info("User deleted successfully userId={}", userId);
-
             unassignUserFromCompany(savedUser, companyId);
-            log.info("User userId={} unassigned from company userId={} successfully", userId, companyId);
+            log.info("User deleted successfully userId={}. User unassigned from company companyId={} successfully", userId, companyId);
         } catch (Exception exc) {
             log.error("Failed to delete user id={} and unassign it from company id={}", userId, companyId, exc);
             throw new TransactionalOperationException("Failed to update user and unassign it from company", exc);

@@ -51,13 +51,14 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto createCompany(CreateCompanyRequest createCompanyRequest) {
         try {
             Company newCompany = companyRepository.save(companyMapper.toEntity(createCompanyRequest));
-            log.info("Company created successfully id={}", newCompany.getId());
-
             if (!createCompanyRequest.employees().isEmpty()) {
                 companyEmployeeRepository.assignEmployeesToCompany(newCompany.getId(), createCompanyRequest.employees());
-                log.info("Employees ids={} assigned to company id={} successfully", createCompanyRequest.employees(), newCompany.getId());
             }
-
+            log.info(
+                    "Company created successfully id={}. Employees ids={} assigned to company successfully.",
+                    newCompany.getId(),
+                    createCompanyRequest.employees()
+            );
             return companyMapper.toDto(newCompany, toEmployeesMapping);
         } catch (Exception exc) {
             log.error("Failed to create company={}", createCompanyRequest, exc);
@@ -79,14 +80,15 @@ public class CompanyServiceImpl implements CompanyService {
 
         try {
             Company updatedCompany = companyRepository.save(savedCompany);
-            log.info("Company updated successfully companyId={}", updatedCompany.getId());
-
             if (!createCompanyRequest.employees().isEmpty()) {
                 companyEmployeeRepository.unassignAllFromCompany(id);
                 companyEmployeeRepository.assignEmployeesToCompany(id, createCompanyRequest.employees());
-                log.info("Employees ids={} reassigned to company id={} successfully", createCompanyRequest.employees(), id);
             }
-
+            log.info(
+                    "Company updated successfully companyId={}. Employees ids={} reassigned to company successfully.",
+                    updatedCompany.getId(),
+                    createCompanyRequest.employees()
+            );
             return companyMapper.toDto(updatedCompany, toEmployeesMapping);
         } catch (Exception exc) {
             log.error("Failed to update company id={} and reassign employees={}", id, createCompanyRequest.employees(), exc);
@@ -101,10 +103,8 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
         try {
             companyEmployeeRepository.unassignAllFromCompany(id);
-            log.info("All employees unassigned from company id={}", id);
-
             companyRepository.delete(company);
-            log.info("Company deleted successfully id={}", id);
+            log.info("All employees unassigned from company and company deleted successfully id={}", id);
         } catch (Exception exc) {
             log.error("Failed to delete company id={}", id, exc);
             throw new TransactionalOperationException("Failed to delete company", exc);
@@ -153,7 +153,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<UserShortDto> result = List.of();
         if (!employees.isEmpty()) {
-            log.info("Fetching employees data ids: {}", employees);
             try {
                 ResponseEntity<List<UserDto>> employeesResponse = userClient.getEmployeesByIds(employees);
                 result = employeesResponse.getBody().stream()
