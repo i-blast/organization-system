@@ -41,9 +41,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDto findCompanyById(Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new CompanyNotFoundException("Company not found."));
-        return companyMapper.toDto(company, toEmployeesMapping);
+        return companyMapper.toDto(findCompanyOrThrow(id), toEmployeesMapping);
+    }
+
+    private Company findCompanyOrThrow(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new CompanyNotFoundException("Company not found id=" + companyId));
     }
 
     @Transactional
@@ -74,7 +77,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto updateCompany(Long id, CreateCompanyRequest createCompanyRequest) {
 
-        Company savedCompany = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
+        Company savedCompany = findCompanyOrThrow(id);
         savedCompany.setName(createCompanyRequest.name());
         savedCompany.setBudget(createCompanyRequest.budget());
 
@@ -99,8 +102,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     @Override
     public void deleteCompany(Long id) {
-
-        Company company = companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("Company not found."));
+        Company company = findCompanyOrThrow(id);
         try {
             companyEmployeeRepository.unassignAllFromCompany(id);
             companyRepository.delete(company);

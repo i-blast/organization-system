@@ -72,7 +72,7 @@ class CompanyServiceImplTest {
         when(companyRepository.findById(999L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> companyService.findCompanyById(999L))
                 .isInstanceOf(CompanyNotFoundException.class)
-                .hasMessageContaining("Company not found.");
+                .hasMessageContaining("Company not found id=999");
     }
 
     @Test

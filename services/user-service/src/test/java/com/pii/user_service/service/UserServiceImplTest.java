@@ -75,7 +75,7 @@ class UserServiceImplTest {
         when(companyClient.getCompanyById(1L)).thenReturn(ResponseEntity.notFound().build());
         assertThatThrownBy(() -> userService.createUser(request))
                 .isInstanceOf(ExternalServiceException.class)
-                .hasMessageContaining("Failed to receive company data id=1");
+                .hasMessageContaining("Failed to receive company data: companyId=1");
     }
 
     @Test
@@ -124,7 +124,7 @@ class UserServiceImplTest {
         when(companyClient.getCompanyById(2L)).thenReturn(ResponseEntity.notFound().build());
         assertThatThrownBy(() -> userService.updateUser(1L, request))
                 .isInstanceOf(ExternalServiceException.class)
-                .hasMessageContaining("Company not found");
+                .hasMessageContaining("Failed to receive company data: companyId=2");
     }
 
     @Test
