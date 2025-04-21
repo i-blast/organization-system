@@ -5,6 +5,7 @@ import com.pii.shared.dto.UserDto;
 import com.pii.user_service.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +33,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUserById(
+            @PathVariable @NotNull @Positive Long id
+    ) {
         log.info("Getting user by id={}", id);
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
-            @PathVariable Long id,
+            @PathVariable @NotNull @Positive Long id,
             @RequestBody @Valid CreateUserRequest createUserRequest
     ) {
         log.info("Updating user with id={} and data={}", id, createUserRequest);
@@ -53,14 +56,18 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable @NotNull @Positive Long id
+    ) {
         log.info("Deleting user with id={}", id);
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/by-company/{companyId}")
-    public ResponseEntity<List<UserDto>> getUsersByCompany(@PathVariable Long companyId) {
+    public ResponseEntity<List<UserDto>> getUsersByCompany(
+            @PathVariable @NotNull @Positive Long companyId
+    ) {
         log.info("Getting users by company id={}", companyId);
         return ResponseEntity.ok(userService.findUsersByCompany(companyId));
     }

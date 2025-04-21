@@ -123,4 +123,16 @@ class CompanyControllerTest {
                 .andExpect(jsonPath("$[0].name").value(companyDto.getName()));
         verify(companyService).findAllCompanies();
     }
+
+    @Test
+    void getCompanyBy0ShouldReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/api/companies/0"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteCompanyByNegIdShouldReturnsBadRequest() throws Exception {
+        mockMvc.perform(delete("/api/companies/-1"))
+                .andExpect(status().isBadRequest());
+    }
 }

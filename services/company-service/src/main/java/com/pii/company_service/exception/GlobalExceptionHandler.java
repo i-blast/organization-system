@@ -3,6 +3,7 @@ package com.pii.company_service.exception;
 import com.pii.shared.exception.ExternalServiceException;
 import com.pii.shared.exception.TransactionalOperationException;
 import com.pii.shared.exception.UnexpectedException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,20 @@ public class GlobalExceptionHandler {
         String message = exc.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
+        return buildErrorResponse(
+                new UnexpectedException(message),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exc) {
+        String message = exc.getConstraintViolations().stream()
+                .map(violation -> String.format("%s: %s",
+                        violation.getPropertyPath(),
+                        violation.getMessage()))
+                .collect(Collectors.joining("; "));
+        log.error("Validation failed: {}", message);
         return buildErrorResponse(
                 new UnexpectedException(message),
                 HttpStatus.BAD_REQUEST

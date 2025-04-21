@@ -4,6 +4,8 @@ import com.pii.company_service.service.CompanyService;
 import com.pii.shared.dto.CompanyDto;
 import com.pii.shared.dto.CreateCompanyRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,9 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyDto> getCompany(@PathVariable Long id) {
+    public ResponseEntity<CompanyDto> getCompany(
+            @PathVariable @NotNull @Positive Long id
+    ) {
         log.info("Getting company with id={}", id);
         return ResponseEntity.ok(companyService.findCompanyById(id));
     }
@@ -38,7 +42,7 @@ public class CompanyController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CompanyDto> updateCompany(
-            @PathVariable Long id,
+            @PathVariable @NotNull @Positive Long id,
             @RequestBody @Valid CreateCompanyRequest dto
     ) {
         log.info("Updating company with id={} and data={}", id, dto);
@@ -46,7 +50,9 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCompany(
+            @PathVariable @NotNull @Positive Long id
+    ) {
         log.info("Deleting company with id={}", id);
         companyService.deleteCompany(id);
         return ResponseEntity.noContent().build();
@@ -60,8 +66,8 @@ public class CompanyController {
 
     @PostMapping("/{companyId}/employees/{employeeId}")
     public ResponseEntity<Void> assignEmployeeToCompany(
-            @PathVariable Long employeeId,
-            @PathVariable Long companyId
+            @PathVariable @NotNull @Positive Long employeeId,
+            @PathVariable @NotNull @Positive Long companyId
     ) {
         log.info("Assigning employee to company with employeeId={} and companyId={}", employeeId, companyId);
         companyService.assignEmployeeToCompany(employeeId, companyId);
@@ -70,8 +76,8 @@ public class CompanyController {
 
     @DeleteMapping("/{companyId}/employees/{employeeId}")
     public ResponseEntity<Void> unassignEmployeeFromCompany(
-            @PathVariable Long employeeId,
-            @PathVariable Long companyId
+            @PathVariable @NotNull @Positive Long employeeId,
+            @PathVariable @NotNull @Positive Long companyId
     ) {
         log.info("Unassigning employee from company with employeeId={} and companyId={}", employeeId, companyId);
         companyService.unassignEmployeeFromCompany(employeeId, companyId);
@@ -80,7 +86,7 @@ public class CompanyController {
 
     @PostMapping("/employees/companies")
     ResponseEntity<Map<Long, CompanyDto>> getCompaniesByEmployees(
-            @RequestBody List<Long> employees
+            @RequestBody @NotNull List<Long> employees
     ) {
         log.info("Getting companies by employees with ids={}", employees);
         return ResponseEntity.ok(companyService.getCompaniesByEmployees(employees));

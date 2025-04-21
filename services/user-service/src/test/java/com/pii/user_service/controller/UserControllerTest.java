@@ -119,4 +119,16 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].lastName").value(userDto.getLastName()));
         verify(userService).getUsersByIds(ids);
     }
+
+    @Test
+    void getUserBy0ShouldReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/api/users/0"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteUserByNegIdShouldReturnsBadRequest() throws Exception {
+        mockMvc.perform(delete("/api/users/-1"))
+                .andExpect(status().isBadRequest());
+    }
 }
