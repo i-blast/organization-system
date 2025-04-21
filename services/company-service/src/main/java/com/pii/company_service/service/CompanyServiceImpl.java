@@ -69,10 +69,6 @@ public class CompanyServiceImpl implements CompanyService {
         }
     }
 
-    private UserShortDto toUserShortDto(UserDto dto) {
-        return new UserShortDto(dto.getId(), dto.getFirstName(), dto.getLastName(), dto.getPhoneNumber());
-    }
-
     @Transactional
     @Override
     public CompanyDto updateCompany(Long id, CreateCompanyRequest createCompanyRequest) {
@@ -141,10 +137,8 @@ public class CompanyServiceImpl implements CompanyService {
                 ));
 
         return savedCompanies.stream()
-                .map(savedCompany -> new CompanyDto(
-                                savedCompany.getId(),
-                                savedCompany.getName(),
-                                savedCompany.getBudget(),
+                .map(savedCompany -> companyMapper.toDto(
+                                savedCompany,
                                 employeesByCompanyIds.getOrDefault(savedCompany.getId(), List.of())
                         )
                 )
@@ -158,7 +152,7 @@ public class CompanyServiceImpl implements CompanyService {
             try {
                 ResponseEntity<List<UserDto>> employeesResponse = userClient.getEmployeesByIds(employees);
                 result = employeesResponse.getBody().stream()
-                        .map(this::toUserShortDto)
+                        .map(companyMapper::toUserShortDto)
                         .toList();
             } catch (Exception exc) {
                 log.error("Failed to receive employees data id={}", exc, employees);

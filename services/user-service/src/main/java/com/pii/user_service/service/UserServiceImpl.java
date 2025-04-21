@@ -1,7 +1,6 @@
 package com.pii.user_service.service;
 
 import com.pii.shared.dto.CompanyDto;
-import com.pii.shared.dto.CompanyShortDto;
 import com.pii.shared.dto.CreateUserRequest;
 import com.pii.shared.dto.UserDto;
 import com.pii.shared.exception.ExternalServiceException;
@@ -43,12 +42,7 @@ public class UserServiceImpl implements UserService {
             User savedUser = userRepository.save(userMapper.toEntity(createUserRequest));
             assignUserToCompany(savedUser, companyId);
 
-            UserDto userDto = userMapper.toDto(savedUser);
-            userDto.setCompany(new CompanyShortDto(
-                    companyDto.getId(),
-                    companyDto.getName(),
-                    companyDto.getBudget()
-            ));
+            UserDto userDto = userMapper.toDto(savedUser, companyDto);
             log.info(
                     "User created successfully id={}. User assigned to company id={} successfully",
                     savedUser.getId(),
@@ -93,14 +87,7 @@ public class UserServiceImpl implements UserService {
         User savedUser = findUserOrThrow(id);
         Long companyId = savedUser.getCompanyId();
         CompanyDto companyDto = extractCompanyData(companyClient.getCompanyById(companyId), companyId);
-
-        UserDto userDto = userMapper.toDto(savedUser);
-        userDto.setCompany(new CompanyShortDto(
-                companyDto.getId(),
-                companyDto.getName(),
-                companyDto.getBudget()
-        ));
-        return userDto;
+        return userMapper.toDto(savedUser, companyDto);
     }
 
     private User findUserOrThrow(Long userId) {
@@ -125,12 +112,7 @@ public class UserServiceImpl implements UserService {
             User updatedUser = userRepository.save(savedUser);
             assignUserToCompany(updatedUser, createUserRequest.companyId());
 
-            UserDto userDto = userMapper.toDto(updatedUser);
-            userDto.setCompany(new CompanyShortDto(
-                    companyDto.getId(),
-                    companyDto.getName(),
-                    companyDto.getBudget()
-            ));
+            UserDto userDto = userMapper.toDto(savedUser, companyDto);
             log.info(
                     "User updated successfully userId={}. User assigned to company companyId={} successfully",
                     updatedUser.getId(),
@@ -160,20 +142,8 @@ public class UserServiceImpl implements UserService {
 
         Map<Long, CompanyDto> companiesByUserId = companiesByUsersResponse.getBody();
         return allUsers.stream()
-                .map(user -> mapToUserDto(user, companiesByUserId.get(user.getId())))
+                .map(user -> userMapper.toDto(user, companiesByUserId.get(user.getId())))
                 .toList();
-    }
-
-    private UserDto mapToUserDto(User user, CompanyDto companyDto) {
-        UserDto userDto = userMapper.toDto(user);
-        if (companyDto != null) {
-            userDto.setCompany(new CompanyShortDto(
-                    companyDto.getId(),
-                    companyDto.getName(),
-                    companyDto.getBudget()
-            ));
-        }
-        return userDto;
     }
 
     @Transactional
@@ -203,24 +173,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findUsersByCompany(Long companyId) {
-
         List<User> users = userRepository.findByCompanyId(companyId);
         if (users.isEmpty()) {
             return List.of();
         }
-
         CompanyDto companyDto = extractCompanyData(companyClient.getCompanyById(companyId), companyId);
-        CompanyShortDto companyShortDto = new CompanyShortDto(
-                companyDto.getId(),
-                companyDto.getName(),
-                companyDto.getBudget()
-        );
         return users.stream()
-                .map(user -> {
-                    UserDto userDto = userMapper.toDto(user);
-                    userDto.setCompany(companyShortDto);
-                    return userDto;
-                })
+                .map(savedUser -> userMapper.toDto(savedUser, companyDto))
                 .toList();
     }
 }
