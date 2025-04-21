@@ -8,10 +8,6 @@ spring:
   cloud:
     discovery:
       enabled: true
-    config:
-      server:
-        native:
-          search-locations: file:/config-repo
 
     gateway:
       discovery:

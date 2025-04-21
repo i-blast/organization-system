@@ -1,11 +1,12 @@
 spring:
   application:
-    name: company-service
+    name: user-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5434/company-service
-    username: company-service
-    password: company-service
+    url: jdbc:postgresql://users-db:5432/user-service
+    username: user-service
+    password: user-service
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -15,22 +16,21 @@ spring:
   cloud:
     discovery:
       enabled: true
-    config:
-      server:
-        native:
-          search-locations: file:/config-repo
+
+  config:
+    import: optional:configserver:http://config-service:8888
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://discovery-service:8761/eureka/
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
 
 server:
-  port: 8082
+  port: 8081
 
 springdoc:
   swagger-ui:
@@ -45,7 +45,8 @@ logging:
     com.pii: DEBUG
 #    org.hibernate: DEBUG
 #    org.hibernate.SQL: DEBUG
-    org.springframework.cloud.openfeign: DEBUG
+#    org.springframework.boot.autoconfigure: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
 #    org.springframework.transaction: TRACE
 #    org.hibernate.type: TRACE
 #    org.hibernate.orm.jdbc.bind: DEBUG

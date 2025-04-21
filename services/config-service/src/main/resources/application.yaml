@@ -8,6 +8,6 @@ spring:
     config:
       server:
         native:
-          search-locations: file:../../config
+          search-locations: classpath:/config
 
 logging:

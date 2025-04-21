@@ -8,7 +8,7 @@ services:
     volumes:
       - ./config:/config
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: native
     networks:
       - backend
     restart: on-failure
